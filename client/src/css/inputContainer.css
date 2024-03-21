@@ -1,0 +1,37 @@
+.input__container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 20px;
+  
+}
+
+.input__container--container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.input__container--inputs{
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 768px)
+{
+  .input__container--container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap : 20px;
+  }
+
+  .input__container--inputs{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
