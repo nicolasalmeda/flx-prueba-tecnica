@@ -1,22 +1,29 @@
-import React, { useState } from 'react'
-import {Space, Table, Tag, Button, Modal} from 'antd'
+import React, { useState,useEffect } from 'react'
+import {useDispatch,useSelector} from 'react-redux'
+import { getAllUsers,deleteUser } from '../Redux/actions/actions'
+import {Space, Table, Tag, Button, Modal, notification} from 'antd'
+import { SmileOutlined } from '@ant-design/icons';
 import UserFormModal from './UserFormModal'
+import { get } from '../utils/request';
 
 
 const UsersContainer = () => {
+  const dispatch = useDispatch()
   const [modalVisible,setModalVisible] = useState(false)
   const [userData,setUserData] = useState(null)
-  const data = [];
+  const users = useSelector(state => state.users)
 
-for (let i = 0; i < 20; i++) {
-  data.push({
-    key: i,
-    username: `John Brown ${i}`,
-    name: `Edward King ${i}`,
-    lastname: `Edward Rey ${i}`,
-    status: i % 2 === 0 ? 'activo' : 'inactivo',
-  });
-}
+  //agregar la key a cada elemento de la lista
+  const mappedUsers = users.map(user => ({
+    ...user,
+    key: user.id
+  }));
+
+useEffect(() => {
+  dispatch(getAllUsers())
+}, [dispatch])
+
+
 
 const Columns = [
   { 
@@ -35,7 +42,7 @@ const Columns = [
     title: 'Etado',
     dataIndex: 'status',
     render: (status) => (
-      <Tag color={status === 'activo' ? 'green' : 'red'}>{status}</Tag>
+      <Tag color={status === 'active' ? 'green' : 'red'}>{status}</Tag>
     )
     },
   {
@@ -54,11 +61,12 @@ const Columns = [
           onClick={() => {
             Modal.confirm({
               title: 'Eliminar usuario',
-              content: '¿Está seguro que quiere eliminar el usuario?',
+              content: `¿Está seguro que quiere eliminar el usuario ${record.username}?`,
               okText: 'Eliminar',
               okType: 'danger',
               onOk() {
-                console.log('OK');
+                dispatch(deleteUser(record.id))
+                openNotification(record.username)
               },
               footer: (_, { OkBtn, CancelBtn }) => (
                 <>
@@ -86,11 +94,26 @@ const handleCancel = () =>{
   setModalVisible(false)
 }
 
+const openNotification = (username) => {
+  notification.success({
+    message: 'Usuario Eliminado',
+    description:
+    `El usuario ${username} ha sido eliminado correctamente`,
+    icon: (
+      <SmileOutlined
+        style={{
+          color: '#00dc00',
+        }}
+      />
+    ),
+  });
+};
+
   return (
     <div className='main__container'>
       <Table 
         columns={Columns} 
-        dataSource={data}
+        dataSource={mappedUsers}
         responsive
         bordered
         size='middle'

@@ -15,10 +15,6 @@ const InputsContainer = () => {
     setModalVisible(false)
   };
 
-  const handleModalCreate = (values) => {
-    console.log('Received values of form: ', values);
-    setModalVisible(false)
-  };
 
   const handleChange = (value) => {
     console.log(`selected ${value}`);
@@ -45,7 +41,6 @@ const InputsContainer = () => {
       </div>
             <UserFormModal 
               open={modalVisible}
-              onCreate={handleModalCreate}
               onCancel={handleModalCancel}
               isEdit={false}
             />

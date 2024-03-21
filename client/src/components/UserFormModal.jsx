@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, Select } from 'antd';
+import { Modal, Form, Input, Button, Select, notification } from 'antd';
+import { useDispatch } from 'react-redux';
+import { postUser, putUser,getAllUsers } from '../Redux/actions/actions';
+import { SmileOutlined, MehOutlined } from '@ant-design/icons';
 import { v4 as uuidv4 } from 'uuid';
 
 const { Option } = Select;
 
-const UserFormModal = ({ open, onCreate, onCancel, isEdit, initialValues }) => {
+const UserFormModal = ({ open, onCancel, isEdit, initialValues}) => {
   const [form] = Form.useForm(); // Aquí se crea la instancia de formulario
+  const dispatch = useDispatch();
 
   const [title, setTitle] = useState('');
   const [submitText, setSubmitText] = useState('');
@@ -40,12 +44,43 @@ const UserFormModal = ({ open, onCreate, onCancel, isEdit, initialValues }) => {
     }
   }, [isEdit, form, initialValues]);
 
-  const onFinish = (values) => {
-    if (!isEdit) {
-      onCreate({ ...values, id: uuidv4(), age: parseInt(values.age) });
-    } else {
-      onCreate(values);
+  const onFinish = async (values) => {
+    try{
+      if (!isEdit) {
+        await dispatch(postUser({ ...values, id: uuidv4(), age: parseInt(values.age) }));
+        openNotification(' Usuario creado',true);
+      } else {
+        await dispatch(putUser(initialValues.id, { ...values, age: parseInt(values.age) }));
+        openNotification('Usuario actualizado',true);
+      }
+      await finish();
+    } catch(err){
+      openNotification( 'Hubo un problema',false);
     }
+  };
+
+  const finish =  () => {  
+    onCancel();
+    dispatch(getAllUsers());
+  }
+
+  const openNotification = ( message, icon) => {
+    notification.success({
+      message: `${message}!`,
+      description:
+      `El ${message} correctamente`,
+      icon: (
+        icon ? <SmileOutlined
+          style={{
+            color: '#00dc00',
+          }} /> : 
+          <MehOutlined
+          style={{
+            color: '#ff0000',
+          }}
+        />
+      ),
+    });
   };
 
   return (
