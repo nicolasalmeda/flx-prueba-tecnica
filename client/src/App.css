@@ -19,6 +19,17 @@
   align-items: center;
 }
 
+.pagination__container{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.table__container{
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
 
 .logo{
   width: 200px;

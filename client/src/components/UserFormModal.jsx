@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, Select, notification } from 'antd';
+import { Modal, Form, Input, Button, Select, notification, InputNumber } from 'antd';
 import { useDispatch } from 'react-redux';
 import { postUser, putUser,getAllUsers } from '../Redux/actions/actions';
 import { SmileOutlined, MehOutlined } from '@ant-design/icons';
@@ -106,12 +106,16 @@ const UserFormModal = ({ open, onCancel, isEdit, initialValues}) => {
         </Form.Item>
         <Form.Item name="status" label="Estado" rules={[{ required: true }]}>
           <Select>
-            <Option value="activo">Activo</Option>
-            <Option value="inactivo">Inactivo</Option>
+            <Option value="active">Activo</Option>
+            <Option value="inactive">Inactivo</Option>
           </Select>
         </Form.Item>
-        <Form.Item name="age" label="Edad" rules={[{ required: true, validator: validateAge, }]}>
-          <Input type="number" />
+        <Form.Item name="age" label="Edad"  rules={[
+          { required: true, message: 'Por favor ingresa la edad.' },
+          { type: 'number', message: 'La edad debe ser un número.' },
+          { validator: validateAge }
+        ]}>
+          <InputNumber min={18} max={99} style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

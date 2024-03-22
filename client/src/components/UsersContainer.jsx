@@ -4,7 +4,7 @@ import { getAllUsers,deleteUser } from '../Redux/actions/actions'
 import {Space, Table, Tag, Button, Modal, notification} from 'antd'
 import { SmileOutlined } from '@ant-design/icons';
 import UserFormModal from './UserFormModal'
-import { get } from '../utils/request';
+import PaginationLimitOffset from './PaginationLimitOffset';
 
 
 const UsersContainer = () => {
@@ -12,15 +12,21 @@ const UsersContainer = () => {
   const [modalVisible,setModalVisible] = useState(false)
   const [userData,setUserData] = useState(null)
   const users = useSelector(state => state.users)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState(10);
+  
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
   //agregar la key a cada elemento de la lista
-  const mappedUsers = users.map(user => ({
+  const mappedUsers = currentUsers.map(user => ({
     ...user,
     key: user.id
   }));
 
 useEffect(() => {
-  dispatch(getAllUsers())
+  dispatch(getAllUsers());
 }, [dispatch])
 
 
@@ -43,7 +49,9 @@ const Columns = [
     dataIndex: 'status',
     render: (status) => (
       <Tag color={status === 'active' ? 'green' : 'red'}>{status}</Tag>
-    )
+    ),
+    width: 150,
+    align: 'center',
     },
   {
     title: 'Acciones',
@@ -67,6 +75,7 @@ const Columns = [
               onOk() {
                 dispatch(deleteUser(record.id))
                 openNotification(record.username)
+                setCurrentPage(1)
               },
               footer: (_, { OkBtn, CancelBtn }) => (
                 <>
@@ -80,7 +89,8 @@ const Columns = [
           Eliminar
         </Button>
       </Space>
-    )
+    ),
+    width: 150,
   }
 ]
 
@@ -93,6 +103,10 @@ const showModal = (record) =>{
 const handleCancel = () =>{
   setModalVisible(false)
 }
+
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+};
 
 const openNotification = (username) => {
   notification.success({
@@ -112,6 +126,7 @@ const openNotification = (username) => {
   return (
     <div className='main__container'>
       <Table 
+        className='table__container'
         columns={Columns} 
         dataSource={mappedUsers}
         responsive
@@ -120,12 +135,19 @@ const openNotification = (username) => {
         scroll={{
           x: 1000,
         }}
+        pagination={false}
       />
       <UserFormModal 
         open={modalVisible}
         initialValues={userData}
         onCancel={handleCancel}
         isEdit={true}
+      />
+      <PaginationLimitOffset
+        currentPage={currentPage}
+        pageSize={usersPerPage}
+        total={users.length}
+        onChange={handlePageChange}
       />
     </div>
   )

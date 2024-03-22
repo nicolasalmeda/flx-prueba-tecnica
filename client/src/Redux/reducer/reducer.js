@@ -4,6 +4,7 @@ import {
   FILTER_BY_STATUS,
   POST_USER,
   PUT_USER,
+  SEARCH_USERS,
 } from '../actions/actions';
 
 const initialState = {
@@ -18,8 +19,8 @@ const reducer = (state = initialState, action) => {
         case GET_USERS:
             return {
                 ...state,
-                users: action.payload,
-                allUsers: action.payload,
+                users: action.payload.users,
+                allUsers: action.payload.users,
                 error: null,
             }
         case DELETE_USER:
@@ -29,10 +30,18 @@ const reducer = (state = initialState, action) => {
                 error: null,
             }
         case FILTER_BY_STATUS:
-          return {
-            ...state,
-            users: state.allUsers.filter(user => user.status === action.payload),
-            error: null,
+          if (action.payload === 'all' || action.payload === undefined) {
+            return {
+              ...state,
+              users: state.allUsers,
+              error: null,
+            }
+          } else {
+            return {
+              ...state,
+              users: state.allUsers.filter(user => user.status === action.payload),
+              error: null,
+            }
           }
 
         case POST_USER:
@@ -44,6 +53,17 @@ const reducer = (state = initialState, action) => {
             return {
               ...state,
             }
+
+        case SEARCH_USERS:
+          const searchText = action.payload.toLowerCase();
+          return {
+            ...state,
+            users: state.allUsers.filter(user => {
+              const userString = `${user.name} ${user.lastname}`.toLowerCase();
+              return userString.includes(searchText);
+            }),
+            error: null,
+          }   
 
         default:
             return state

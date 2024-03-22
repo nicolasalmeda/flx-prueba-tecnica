@@ -5,17 +5,20 @@ export const DELETE_USER = 'DELETE_USER';
 export const FILTER_BY_STATUS = 'FILTER_BY_STATUS';
 export const POST_USER = 'POST_USER';
 export const PUT_USER = 'PUT_USER';
+export const SEARCH_USERS = 'SEARCH_USERS';
 
 
 export const getAllUsers = () => {
   return async (dispatch) => {
-    try{
-      const response = await get('users');
+    try {
+      const response = await get(`users`);
       dispatch({
         type: GET_USERS,
-        payload: response.data
+        payload: {
+          users: response.data,
+        }
       })
-    }catch(err){
+    } catch(err) {
       dispatch({
         type: GET_USERS,
         payload: err.message
@@ -80,3 +83,9 @@ export const putUser = (id, data) => {
   }
 }
 
+export const searchUsers = (searchText) => {
+  return {
+    type: SEARCH_USERS,
+    payload: searchText
+  }
+}

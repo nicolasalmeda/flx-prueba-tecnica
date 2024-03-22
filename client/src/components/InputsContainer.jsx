@@ -1,10 +1,13 @@
 import React, {useState} from 'react'
 import {Button, Select} from 'antd'
 import SearchBar from './SearchBar';
+import { useDispatch } from 'react-redux';
+import { filterByStatus } from '../Redux/actions/actions';
 import '../css/inputContainer.css'
 import UserFormModal from './UserFormModal';
 
 const InputsContainer = () => {
+  const dispatch = useDispatch()
   const [modalVisible, setModalVisible] = useState(false)
 
   const handleAddUserClick = () => {
@@ -17,22 +20,23 @@ const InputsContainer = () => {
 
 
   const handleChange = (value) => {
+    dispatch(filterByStatus(value))
     console.log(`selected ${value}`);
   }
   return (
     <div className='input__container'>
-      <p>Usuarios  /  <strong>Listado de Usuarios</strong></p>
+      <p className='nav'>Usuarios  /  <strong>Listado de Usuarios</strong></p>
       <div className='input__container--container'>
         <div className='input__container--inputs'>
           <SearchBar />
           <Select 
-            // defaultValue="active"
             placeholder="Filtrar por estado"
             style={{ width: 200 }}
             onChange={handleChange}
             options={[
               {value: 'active', label: 'Activos'},
-              {value: 'inactive', label: 'Inactivos'}
+              {value: 'inactive', label: 'Inactivos'},
+              {value: 'all', label: 'Todos'}
             ]}
             allowClear
             />
