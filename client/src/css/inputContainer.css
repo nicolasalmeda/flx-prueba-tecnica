@@ -21,6 +21,11 @@
 
 .nav{
   font-weight: lighter;
+  color: rgb(115, 115, 115);
+}
+
+.nav strong{
+  color: black;
 }
 
 @media (max-width: 768px)
